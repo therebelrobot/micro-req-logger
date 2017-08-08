@@ -1,7 +1,7 @@
 const ksuid = require('ksuid')
 const Logger = require('@therebel/log')
 
-function reqLog ({ serviceName, logLevel, nodeEnv }) {
+module.exports = function reqLog ({ serviceName, logLevel, nodeEnv }) {
   logger = Logger({ name: `${serviceName} [${nodeEnv}]`, level: logLevel, env: nodeEnv })
   return function (handler) {
     return function (req, res) {
