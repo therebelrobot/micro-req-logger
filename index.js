@@ -1,18 +1,18 @@
 const ksuid = require('ksuid')
 const Logger = require('@therebel/log')
 
-module.exports = function reqLog ({ serviceName, logLevel, nodeEnv, stats }) {
-  logger = Logger({ name: `${serviceName} [${nodeEnv}]`, level: logLevel, env: nodeEnv })
+module.exports = function reqLog ({ serviceName, logLevel, nodeEnv, stats, logger }) {
+  logger = logger || Logger({ name: `${serviceName} [${nodeEnv}]`, level: logLevel, env: nodeEnv })
   return function (handler) {
     return function (req, res) {
-      requestStart(req, res, logger, stats)
+      requestStart({ req, res, logger, stats })
       return handler(req, res).then(
         (...args) => {
-          requestFinish(req, res, logger, stats)
+          requestFinish({ req, res, logger, stats })
           return Promise.resolve(...args)
         },
-        (err) => {
-          requestFinish(req, res, logger, stats, err)
+        (error) => {
+          requestFinish({ req, res, logger, stats, error })
           return Promise.reject(err) // eslint-disable-line prefer-promise-reject-errors
         }
       )
@@ -20,17 +20,17 @@ module.exports = function reqLog ({ serviceName, logLevel, nodeEnv, stats }) {
   }
 }
 
-function requestStart (req, res, logger, stats) {
+function requestStart ({ req, res, logger, stats }) {
   req.reqLogger = {}
   req.reqLogger.error = null
   req.reqLogger.start = Date.now()
   req.reqLogger.path = getNormalizedPathPattern(req)
   req.reqLogger.requestId = ksuid.randomSync().string
-  logger.info('request', { method: req.method, path: req.url, id: req.reqLogger.requestId, query: req.query })
+  logger.info(`⠿⠿ request ${req.reqLogger.requestId}`, { method: req.method, path: req.url, id: req.reqLogger.requestId, query: req.query })
   res.setHeader('X-Request-ID', req.reqLogger.requestId)
 }
 
-function requestFinish (req, res, logger, stats, error) {
+function requestFinish ({ req, res, logger, stats, error }) {
   if (error && error.statusCode) res.statusCode = error.statusCode
   else if (error) res.statusCode = 500 // thrown errors are caught further up the chain in micro
   else if (!res.statusCode) res.statusCode = 200 // normal responses are attached in micro too. only custom errors, like 400s, are present right now
@@ -82,11 +82,11 @@ function requestFinish (req, res, logger, stats, error) {
     // increment code-specific stats and return log response
   switch (code) {
     case 4: // 4xx client errors
-      return logger.warning('response', responseObject)
+      return logger.warning(`🛑  response ${req.reqLogger.requestId}`, responseObject)
     case 5: // 5xx server errors
-      return logger.error('response', Object.assign({}, responseObject, { error }))
+      return logger.error(`💥  response ${req.reqLogger.requestId}`, Object.assign({}, responseObject, { error }))
     default: // all other responses
-      return logger.info('response', responseObject)
+      return logger.info(`✅  response ${req.reqLogger.requestId}`, responseObject)
   }
 }
 
