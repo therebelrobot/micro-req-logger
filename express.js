@@ -20,7 +20,7 @@ function requestStart ({ req, res, logger, stats }) {
 
 function requestFinish ({ req, res, logger, stats, error }) {
   return (...args) => {
-    var code = res._header ? String(res.statusCode) : String(-1);
+    const code = res._header ? (res.statusCode / 100 | 0) : 5;
     const duration = Date.now() - req.reqLogger.start
     const responseObject = {
       method: req.method,

@@ -1,6 +1,6 @@
 {
   "name": "@therebel/req-log",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A wrapper for zeit/micro + express controllers that logs requests and notifies of slow responses, with unique IDs",
   "main": "index.js",
   "scripts": {
