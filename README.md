@@ -1,2 +1,2 @@
 # micro-req-logger
-A wrapper for zeit/micro controllers that logs requests and notifies of slow responses, with unique IDs
+A small utility for express / zeit-micro that logs requests and notifies of slow responses, with unique IDs, sending relevant data to datadog
