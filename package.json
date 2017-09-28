@@ -1,7 +1,7 @@
 {
   "name": "@therebel/req-log",
-  "version": "0.1.0",
-  "description": "A wrapper for zeit/micro controllers that logs requests and notifies of slow responses, with unique IDs",
+  "version": "0.2.0",
+  "description": "A wrapper for zeit/micro + express controllers that logs requests and notifies of slow responses, with unique IDs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
