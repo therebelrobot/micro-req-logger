@@ -1,13 +1,15 @@
 const ksuid = require('ksuid')
+const minimatch = require('minimatch')
 const { getNormalizedPathPattern, removeQuery, escapeSpecialCharacters } = require('./utils')
 
-module.exports = ({logger, stats}) => (req, res, next) => {
-  res.on('finish', requestFinish({req, res, logger, stats}));
-  requestStart({req, res, logger, stats})
+module.exports = ({logger, stats, ignore}) => (req, res, next) => {
+  res.on('finish', requestFinish({req, res, logger, stats, ignore}));
+  requestStart({req, res, logger, stats, ignore})
   next()
 }
 
-function requestStart ({ req, res, logger, stats }) {
+function requestStart ({ req, res, logger, stats, ignore }) {
+  if (ignore && minimatch(req.path, ignore)) return
   logger.info('this is starting')
   req.reqLogger = {}
   req.reqLogger.error = null
@@ -18,8 +20,9 @@ function requestStart ({ req, res, logger, stats }) {
   res.setHeader('X-Request-ID', req.reqLogger.requestId)
 }
 
-function requestFinish ({ req, res, logger, stats, error }) {
+function requestFinish ({ req, res, logger, stats, error, ignore }) {
   return (...args) => {
+    if (ignore && minimatch(req.path, ignore)) return
     const code = res._header ? (res.statusCode / 100 | 0) : 5;
     const duration = Date.now() - req.reqLogger.start
     const responseObject = {
