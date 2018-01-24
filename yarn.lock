@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@therebel/log@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@therebel/log/-/log-1.1.0.tgz#1b65daf3a2b17ab58ab7c0d50ed4bb34a7ea5cc5"
+"@therebel/log@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@therebel/log/-/log-1.1.1.tgz#2fadf8809a423bc9a829583072d29a605e0f80b5"
   dependencies:
     ecs-logs-js "^0.2.0"
     logdna "^1.3.5"
