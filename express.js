@@ -10,7 +10,6 @@ module.exports = ({logger, stats, ignore}) => (req, res, next) => {
 
 function requestStart ({ req, res, logger, stats, ignore }) {
   if (ignore && minimatch(req.path, ignore)) return
-  logger.info('this is starting')
   req.reqLogger = {}
   req.reqLogger.error = null
   req.reqLogger.start = Date.now()
